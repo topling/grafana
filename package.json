@@ -281,7 +281,7 @@
     "fast-json-patch": "2.2.1",
     "fast-text-encoding": "^1.0.0",
     "file-saver": "2.0.2",
-    "history": "4.10.1",
+    "history": "5.1.0",
     "hoist-non-react-statics": "3.3.2",
     "immer": "9.0.6",
     "immutable": "3.8.2",
