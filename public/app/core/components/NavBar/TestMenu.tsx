@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { css, cx } from '@emotion/css';
 import { useMenuTriggerState, useTreeState } from 'react-stately';
 import {
@@ -133,23 +133,14 @@ function MenuPopup(props: any) {
         return `${item.id}-${index}`;
       });
 
-  const firstKey = parent.children
-    ?.filter((item: any, index: number) => {
-      return index === 0;
-    })
-    .map((item: any, index: number) => {
-      return `${item.id}-${index}`;
-    });
-
-  console.log({ firstKey });
-
-  const selectedKeys = enableAllItems ? firstKey : [];
   // Create menu state based on the incoming props
-  const state = useTreeState({ ...rest, disabledKeys, selectedKeys });
+  const state = useTreeState({ ...rest, disabledKeys });
+
+  const { selectionManager, collection, ...restState } = state;
 
   // Get props for the menu element
   const ref = React.useRef(null);
-  const { menuProps } = useMenu(rest, state, ref);
+  const { menuProps } = useMenu(rest, { ...restState, selectionManager, collection }, ref);
 
   // Handle events that should cause the menu to close,
   // e.g. blur, clicking outside, or pressing the escape key.
@@ -163,6 +154,14 @@ function MenuPopup(props: any) {
     },
     overlayRef
   );
+
+  useEffect(() => {
+    if (enableAllItems) {
+      const firstKey = collection.getFirstKey();
+      selectionManager.setFocusedKey(firstKey);
+      selectionManager.setFocused(true);
+    }
+  }, [enableAllItems, selectionManager, collection]);
 
   const theme = useTheme2();
   // Wrap in <FocusScope> so that focus is restored back to the
