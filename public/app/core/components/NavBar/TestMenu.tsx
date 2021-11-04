@@ -12,6 +12,7 @@ import {
   useMenuItem,
   useMenuTrigger,
   useOverlay,
+  useFocusManager,
 } from 'react-aria';
 import { Icon, IconName, Link, useTheme2 } from '@grafana/ui';
 import { GrafanaTheme2 } from '@grafana/data';
@@ -48,6 +49,7 @@ export function MenuButton(props: any) {
 
   const [enableAllItems, setEnableAllItems] = useState(false);
 
+  let focusManager = useFocusManager();
   // Get props for the button based on the trigger props from useMenuTrigger
   const { buttonProps } = useButton(
     {
@@ -62,6 +64,7 @@ export function MenuButton(props: any) {
           case 'ArrowRight':
             e.continuePropagation();
             setEnableAllItems(true);
+            focusManager.focusNext();
             break;
           case 'ArrowLeft':
             e.continuePropagation();
@@ -155,7 +158,7 @@ function MenuPopup(props: any) {
   // to allow screen reader users to dismiss the popup easily.
   return (
     <FocusScope restoreFocus>
-      <div {...overlayProps} ref={overlayRef} tabIndex={-1}>
+      <div {...overlayProps} ref={overlayRef}>
         <DismissButton onDismiss={props.onClose} />
         <ul
           {...mergeProps(menuProps, props.domProps)}
@@ -170,7 +173,6 @@ function MenuPopup(props: any) {
             background: 'lightgray',
             left: `${theme.components.sidemenu.width - 1}px`,
           }}
-          tabIndex={-1}
         >
           {[...state.collection].map((item) => (
             <MenuItem key={item.key} item={item} state={state} onAction={props.onAction} onClose={props.onClose} />
