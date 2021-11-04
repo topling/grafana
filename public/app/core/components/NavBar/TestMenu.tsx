@@ -199,6 +199,7 @@ function MenuPopup(props: any) {
             background: 'lightgray',
             left: `${theme.components.sidemenu.width - 1}px`,
           }}
+          tabIndex={enableAllItems ? 0 : -1}
         >
           {[...state.collection].map((item) => (
             <MenuItem key={item.key} item={item} state={state} onAction={props.onAction} onClose={props.onClose} />
