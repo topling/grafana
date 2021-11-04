@@ -110,6 +110,7 @@ export function MenuButton(props: any) {
       {state.isOpen && (
         <MenuPopup
           {...rest}
+          parent={link}
           enableAllItems={enableAllItems}
           domProps={menuProps}
           autoFocus={state.focusStrategy}
@@ -121,10 +122,14 @@ export function MenuButton(props: any) {
 }
 
 function MenuPopup(props: any) {
-  const { enableAllItems, ...rest } = props;
-  const disabledKeys = enableAllItems ? [] : [];
+  const { enableAllItems, parent, ...rest } = props;
+  const disabledKeys = enableAllItems
+    ? []
+    : parent.children.map((item, index) => {
+        return `${item.id}-${index}`;
+      });
   // Create menu state based on the incoming props
-  const state = useTreeState({ ...rest, disabledKeys: [], selectionMode: 'none' });
+  const state = useTreeState({ ...rest, disabledKeys, selectionMode: 'none' });
 
   // Get props for the menu element
   const ref = React.useRef(null);
@@ -168,14 +173,7 @@ function MenuPopup(props: any) {
           tabIndex={-1}
         >
           {[...state.collection].map((item) => (
-            <MenuItem
-              key={item.key}
-              item={item}
-              state={state}
-              onAction={props.onAction}
-              onClose={props.onClose}
-              enabled={enableAllItems}
-            />
+            <MenuItem key={item.key} item={item} state={state} onAction={props.onAction} onClose={props.onClose} />
           ))}
         </ul>
         <DismissButton onDismiss={props.onClose} />
@@ -184,21 +182,15 @@ function MenuPopup(props: any) {
   );
 }
 
-function MenuItem({ item, state, onAction, onClose, enabled }: any) {
+function MenuItem({ item, state, onAction, onClose }: any) {
   // Get props for the menu item element
   const ref = React.useRef(null);
-  if (!enabled) {
-    state.disabledKeys.add(item.key);
-  } else {
-    state.disabledKeys.delete(item.key);
-  }
-  console.log({ enabled });
-  console.log({ keys: state.disabledKeys });
 
   const { menuItemProps } = useMenuItem(
     {
       key: item.key,
       onAction,
+      isDisabled: state.disabledKeys.has(item.key),
       onClose,
     },
     state,
