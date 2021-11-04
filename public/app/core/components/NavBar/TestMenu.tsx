@@ -125,7 +125,7 @@ function MenuPopup(props: any) {
   const { enableAllItems, parent, ...rest } = props;
   const disabledKeys = enableAllItems
     ? []
-    : parent.children.map((item, index) => {
+    : parent.children?.map((item: any, index: number) => {
         return `${item.id}-${index}`;
       });
   // Create menu state based on the incoming props
