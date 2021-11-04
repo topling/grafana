@@ -40,9 +40,9 @@ export function MenuButton(props: any) {
       if (isFocused) {
         state.open();
       }
-      if (!isFocused) {
-        state.close();
-      }
+      // if (!isFocused) {
+      //   state.close();
+      // }
     },
   });
 
@@ -150,7 +150,7 @@ function MenuPopup(props: any) {
   // to allow screen reader users to dismiss the popup easily.
   return (
     <FocusScope restoreFocus>
-      <div {...overlayProps} ref={overlayRef}>
+      <div {...overlayProps} ref={overlayRef} tabIndex={-1}>
         <DismissButton onDismiss={props.onClose} />
         <ul
           {...mergeProps(menuProps, props.domProps)}
@@ -165,7 +165,7 @@ function MenuPopup(props: any) {
             background: 'lightgray',
             left: `${theme.components.sidemenu.width - 1}px`,
           }}
-          tabIndex={enableAllItems ? 0 : -1}
+          tabIndex={-1}
         >
           {[...state.collection].map((item) => (
             <MenuItem
@@ -192,6 +192,8 @@ function MenuItem({ item, state, onAction, onClose, enabled }: any) {
   } else {
     state.disabledKeys.delete(item.key);
   }
+  console.log({ enabled });
+  console.log({ keys: state.disabledKeys });
 
   const { menuItemProps } = useMenuItem(
     {
