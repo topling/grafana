@@ -56,7 +56,7 @@ export function MenuButton(props: any) {
         switch (e.key) {
           case 'Enter':
           case ' ':
-            e.stopPropagation();
+            e.continuePropagation();
             link.onClick();
             break;
           case 'ArrowRight':
