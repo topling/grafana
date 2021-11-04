@@ -5,6 +5,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/grafana/grafana/pkg/components/null"
+
 	"github.com/grafana/grafana/pkg/infra/log"
 	"github.com/grafana/grafana/pkg/infra/metrics"
 	"github.com/grafana/grafana/pkg/plugins"
@@ -56,6 +58,11 @@ func (e *DefaultEvalHandler) Eval(context *EvalContext) {
 		} else {
 			firing = firing && cr.Firing
 			noDataFound = noDataFound && cr.NoDataFound
+		}
+
+		// Append an eval match to make sure we keep a record that at this point in time, this query returned no data.
+		if cr.NoDataFound {
+			cr.EvalMatches = append(cr.EvalMatches, &EvalMatch{Metric: "NoData", Value: null.Float{}})
 		}
 
 		if i > 0 {
