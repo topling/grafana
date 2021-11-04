@@ -122,9 +122,9 @@ export function MenuButton(props: any) {
 
 function MenuPopup(props: any) {
   const { enableAllItems, ...rest } = props;
-
+  const disabledKeys = enableAllItems ? [] : [];
   // Create menu state based on the incoming props
-  const state = useTreeState({ ...rest, selectionMode: 'none' });
+  const state = useTreeState({ ...rest, disabledKeys: [], selectionMode: 'none' });
 
   // Get props for the menu element
   const ref = React.useRef(null);
@@ -198,13 +198,14 @@ function MenuItem({ item, state, onAction, onClose, enabled }: any) {
   const { menuItemProps } = useMenuItem(
     {
       key: item.key,
-      isDisabled: !enabled,
       onAction,
       onClose,
     },
     state,
     ref
   );
+
+  console.log({ tabIndex: menuItemProps.tabIndex, ariaDisabled: menuItemProps['aria-disabled'] });
 
   // Handle focus events so we can apply highlighted
   // style to the focused menu item
