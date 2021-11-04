@@ -66,7 +66,6 @@ export function MenuButton(props: any) {
               e.stopPropagation();
             }
             e.preventDefault();
-            state.toggle('first');
             break;
           case 'ArrowLeft':
             e.continuePropagation();
@@ -134,15 +133,23 @@ function MenuPopup(props: any) {
         return `${item.id}-${index}`;
       });
 
-  const firstKey = disabledKeys.findIndex((item, index) => index === 0);
+  const firstKey = parent.children
+    ?.filter((item: any, index: number) => {
+      return index === 0;
+    })
+    .map((item: any, index: number) => {
+      return `${item.id}-${index}`;
+    });
 
-  const selectedKeys = enableAllItems ? [firstKey] : [];
+  console.log({ firstKey });
+
+  const selectedKeys = enableAllItems ? firstKey : [];
   // Create menu state based on the incoming props
   const state = useTreeState({ ...rest, disabledKeys, selectedKeys });
 
   // Get props for the menu element
   const ref = React.useRef(null);
-  const { menuProps } = useMenu(rest, { ...state, selectionManager: () => {} }, ref);
+  const { menuProps } = useMenu(rest, state, ref);
 
   // Handle events that should cause the menu to close,
   // e.g. blur, clicking outside, or pressing the escape key.
