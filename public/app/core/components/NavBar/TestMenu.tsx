@@ -12,7 +12,6 @@ import {
   useMenuItem,
   useMenuTrigger,
   useOverlay,
-  useFocusManager,
 } from 'react-aria';
 import { Icon, IconName, Link, useTheme2 } from '@grafana/ui';
 import { GrafanaTheme2 } from '@grafana/data';
@@ -49,7 +48,6 @@ export function MenuButton(props: any) {
 
   const [enableAllItems, setEnableAllItems] = useState(false);
 
-  let focusManager = useFocusManager();
   // Get props for the button based on the trigger props from useMenuTrigger
   const { buttonProps } = useButton(
     {
@@ -64,7 +62,6 @@ export function MenuButton(props: any) {
           case 'ArrowRight':
             e.continuePropagation();
             setEnableAllItems(true);
-            focusManager.focusNext();
             break;
           case 'ArrowLeft':
             e.continuePropagation();
