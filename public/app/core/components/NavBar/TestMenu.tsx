@@ -133,12 +133,16 @@ function MenuPopup(props: any) {
     : parent.children?.map((item: any, index: number) => {
         return `${item.id}-${index}`;
       });
+
+  const firstKey = disabledKeys.findIndex((item, index) => index === 0);
+
+  const selectedKeys = enableAllItems ? [firstKey] : [];
   // Create menu state based on the incoming props
-  const state = useTreeState({ ...rest, disabledKeys });
+  const state = useTreeState({ ...rest, disabledKeys, selectedKeys });
 
   // Get props for the menu element
   const ref = React.useRef(null);
-  const { menuProps } = useMenu(rest, state, ref);
+  const { menuProps } = useMenu(rest, { ...state, selectionManager: () => {} }, ref);
 
   // Handle events that should cause the menu to close,
   // e.g. blur, clicking outside, or pressing the escape key.
