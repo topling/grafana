@@ -60,8 +60,13 @@ export function MenuButton(props: any) {
             link.onClick();
             break;
           case 'ArrowRight':
-            e.continuePropagation();
             setEnableAllItems(true);
+            // Stop propagation, unless it would already be handled by useKeyboard.
+            if (!('continuePropagation' in e)) {
+              e.stopPropagation();
+            }
+            e.preventDefault();
+            state.toggle('first');
             break;
           case 'ArrowLeft':
             e.continuePropagation();
@@ -129,7 +134,7 @@ function MenuPopup(props: any) {
         return `${item.id}-${index}`;
       });
   // Create menu state based on the incoming props
-  const state = useTreeState({ ...rest, disabledKeys, selectionMode: 'none' });
+  const state = useTreeState({ ...rest, disabledKeys });
 
   // Get props for the menu element
   const ref = React.useRef(null);
