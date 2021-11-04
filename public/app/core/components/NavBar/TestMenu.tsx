@@ -40,9 +40,9 @@ export function MenuButton(props: any) {
       if (isFocused) {
         state.open();
       }
-      // if (!isFocused) {
-      //   state.close();
-      // }
+      if (!isFocused) {
+        state.close();
+      }
     },
   });
 
@@ -68,9 +68,19 @@ export function MenuButton(props: any) {
             e.preventDefault();
             break;
           case 'ArrowLeft':
+            setEnableAllItems(false);
+            // Stop propagation, unless it would already be handled by useKeyboard.
+            if (!('continuePropagation' in e)) {
+              e.stopPropagation();
+            }
+            e.preventDefault();
+            break;
+
+          case 'Tab':
             e.continuePropagation();
             setEnableAllItems(false);
             break;
+
           default:
             break;
         }
@@ -154,12 +164,16 @@ function MenuPopup(props: any) {
     },
     overlayRef
   );
+  console.log({ isFocused: selectionManager.isFocused });
 
   useEffect(() => {
-    if (enableAllItems) {
+    if (enableAllItems && !selectionManager.isFocused) {
       const firstKey = collection.getFirstKey();
       selectionManager.setFocusedKey(firstKey);
       selectionManager.setFocused(true);
+    } else if (!enableAllItems && selectionManager.isFocused) {
+      selectionManager.setFocused(false);
+      selectionManager.clearSelection();
     }
   }, [enableAllItems, selectionManager, collection]);
 
