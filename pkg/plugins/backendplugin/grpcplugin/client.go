@@ -1,6 +1,7 @@
 package grpcplugin
 
 import (
+	"crypto/tls"
 	"os/exec"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend/grpcplugin"
@@ -50,6 +51,16 @@ type PluginDescriptor struct {
 	startRendererFn  StartRendererFunc
 }
 
+type remotePluginDescriptor struct {
+	pluginID string
+	connOpts RemoteConnOpts
+}
+
+type RemoteConnOpts struct {
+	Address   string
+	TLSConfig *tls.Config
+}
+
 // getV2PluginSet returns list of plugins supported on v2.
 func getV2PluginSet() goplugin.PluginSet {
 	return goplugin.PluginSet{
@@ -70,6 +81,14 @@ func NewBackendPlugin(pluginID, executablePath string) backendplugin.PluginFacto
 		versionedPlugins: map[int]goplugin.PluginSet{
 			grpcplugin.ProtocolVersion: getV2PluginSet(),
 		},
+	})
+}
+
+// NewRemoteBackendPlugin creates a new backend plugin factory used for registering a backend plugin.
+func NewRemoteBackendPlugin(pluginID string, connOpts RemoteConnOpts) backendplugin.PluginFactoryFunc {
+	return newRemotePlugin(remotePluginDescriptor{
+		pluginID: pluginID,
+		connOpts: connOpts,
 	})
 }
 

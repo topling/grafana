@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io"
 
+	"google.golang.org/grpc"
+
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/grpcplugin"
 	"github.com/grafana/grafana-plugin-sdk-go/genproto/pluginv2"
@@ -90,6 +92,16 @@ func newClientV2(descriptor PluginDescriptor, logger log.Logger, rpcClient plugi
 	}
 
 	return &c, nil
+}
+
+func newRemoteClientV2(conn *grpc.ClientConn) (pluginClient, error) {
+	return &clientV2{
+		DataClient:        pluginv2.NewDataClient(conn),
+		ResourceClient:    pluginv2.NewResourceClient(conn),
+		StreamClient:      pluginv2.NewStreamClient(conn),
+		RendererPlugin:    pluginextensionv2.NewRendererClient(conn),
+		DiagnosticsClient: pluginv2.NewDiagnosticsClient(conn),
+	}, nil
 }
 
 func (c *clientV2) CollectMetrics(ctx context.Context) (*backend.CollectMetricsResult, error) {

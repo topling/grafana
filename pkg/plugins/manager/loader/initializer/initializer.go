@@ -1,6 +1,7 @@
 package initializer
 
 import (
+	"crypto/tls"
 	"fmt"
 	"net/url"
 	"os"
@@ -85,7 +86,23 @@ func (i *Initializer) Initialize(p *plugins.Plugin) error {
 
 	if p.Backend {
 		var backendFactory backendplugin.PluginFactoryFunc
-		if p.IsRenderer() {
+
+		// use remote plugin connection configuration if provided
+		if remotePluginSettings, exists := i.cfg.RemotePluginSettings[p.ID]; exists {
+			remoteOpts := grpcplugin.RemoteConnOpts{
+				Address: remotePluginSettings.ServerAddr,
+			}
+
+			if remotePluginSettings.TLSEnabled {
+				// TODO include missing config fields
+				remoteOpts.TLSConfig = &tls.Config{
+					InsecureSkipVerify: remotePluginSettings.TLSInsecureSkipVerify,
+					ServerName:         remotePluginSettings.TLSServerName,
+				}
+			}
+
+			backendFactory = grpcplugin.NewRemoteBackendPlugin(p.ID, remoteOpts)
+		} else if p.IsRenderer() {
 			cmd := plugins.ComposeRendererStartCommand()
 			backendFactory = grpcplugin.NewRendererPlugin(p.ID, filepath.Join(p.PluginDir, cmd),
 				func(pluginID string, renderer pluginextensionv2.RendererPlugin, logger log.Logger) error {

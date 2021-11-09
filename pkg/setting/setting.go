@@ -255,6 +255,7 @@ type Cfg struct {
 	PluginsEnableAlpha               bool
 	PluginsAppsSkipVerifyTLS         bool
 	PluginSettings                   PluginSettings
+	RemotePluginSettings             RemotePluginSettings
 	PluginsAllowUnsigned             []string
 	PluginCatalogURL                 string
 	PluginAdminEnabled               bool
@@ -926,6 +927,7 @@ func (cfg *Cfg) Load(args CommandLineArgs) error {
 	cfg.PluginsEnableAlpha = pluginsSection.Key("enable_alpha").MustBool(false)
 	cfg.PluginsAppsSkipVerifyTLS = pluginsSection.Key("app_tls_skip_verify_insecure").MustBool(false)
 	cfg.PluginSettings = extractPluginSettings(iniFile.Sections())
+	cfg.RemotePluginSettings = extractRemotePluginSettings(iniFile.Sections())
 	pluginsAllowUnsigned := pluginsSection.Key("allow_loading_unsigned_plugins").MustString("")
 	for _, plug := range strings.Split(pluginsAllowUnsigned, ",") {
 		plug = strings.TrimSpace(plug)
