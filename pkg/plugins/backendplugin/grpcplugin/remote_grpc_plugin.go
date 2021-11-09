@@ -103,7 +103,7 @@ func (rp *remotePlugin) Stop(ctx context.Context) error {
 }
 
 func (rp *remotePlugin) IsManaged() bool {
-	return false
+	return true
 }
 
 func (rp *remotePlugin) Exited() bool {
