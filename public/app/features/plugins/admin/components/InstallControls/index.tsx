@@ -2,7 +2,7 @@ import React from 'react';
 import { css } from '@emotion/css';
 import { satisfies } from 'semver';
 
-import { config } from '@grafana/runtime';
+import { config, featureEnabled } from '@grafana/runtime';
 import { HorizontalGroup, Icon, LinkButton, useStyles2 } from '@grafana/ui';
 import { GrafanaTheme2, PluginType } from '@grafana/data';
 
@@ -39,7 +39,7 @@ export const InstallControls = ({ plugin }: Props) => {
     return null;
   }
 
-  if (plugin.isEnterprise && !config.licenseInfo?.hasValidLicense) {
+  if (plugin.isEnterprise && !featureEnabled('enterprise.plugins')) {
     return (
       <HorizontalGroup height="auto" align="center">
         <span className={styles.message}>No valid Grafana Enterprise license detected.</span>

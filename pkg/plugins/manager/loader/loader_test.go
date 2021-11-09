@@ -926,3 +926,11 @@ func (t *fakeLicensingService) HasValidLicense() bool {
 func (t *fakeLicensingService) Environment() map[string]string {
 	return map[string]string{"GF_ENTERPRISE_LICENSE_TEXT": t.tokenRaw}
 }
+
+func (*fakeLicensingService) EnabledFeatures() map[string]bool {
+	return map[string]bool{}
+}
+
+func (*fakeLicensingService) FeatureEnabled(feature string) bool {
+	return false
+}
