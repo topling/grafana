@@ -15,7 +15,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/inconshreveable/log15"
+	"github.com/go-kit/log"
 )
 
 // FileLogWriter implements LoggerInterface.
@@ -70,7 +70,9 @@ func (l *MuxWriter) setFD(fd *os.File) error {
 func NewFileWriter() *FileLogWriter {
 	w := &FileLogWriter{
 		Filename: "",
-		Format:   log15.LogfmtFormat(),
+		Format: func(w io.Writer) log.Logger {
+			return log.NewLogfmtLogger(w)
+		},
 		Maxlines: 1000000,
 		Maxsize:  1 << 28, // 256 MB
 		Daily:    true,
@@ -83,7 +85,7 @@ func NewFileWriter() *FileLogWriter {
 }
 
 func (w *FileLogWriter) Log(keyvals ...interface{}) error {
-	data := w.Format.Format(r)
+	data := w.Format(keyvals...)
 	w.docheck(len(data))
 	_, err := w.mw.Write(data)
 	return err

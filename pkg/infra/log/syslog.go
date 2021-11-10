@@ -8,8 +8,8 @@ import (
 	"log/syslog"
 	"os"
 
+	"github.com/go-kit/log"
 	"github.com/go-kit/log/level"
-	"github.com/inconshreveable/log15"
 	"gopkg.in/ini.v1"
 )
 
@@ -54,26 +54,32 @@ func (sw *SysLogHandler) Init() error {
 	return nil
 }
 
+type levelOption func(logger log.Logger) log.Logger
+
 func (sw *SysLogHandler) Log(keyvals ...interface{}) error {
 	var err error
-
-	msg := string(sw.Format.Format(r))
-
-	switch r.Lvl {
-	case log15.LvlDebug:
-		err = sw.syslog.Debug(msg)
-	case log15.LvlInfo:
-		err = sw.syslog.Info(msg)
-	case log15.LvlWarn:
-		err = sw.syslog.Warning(msg)
-	case log15.LvlError:
-		err = sw.syslog.Err(msg)
-	case log15.LvlCrit:
-		err = sw.syslog.Crit(msg)
-	default:
-		err = errors.New("invalid syslog level")
+	for i := 0; i < len(keyvals)-1; i += 2 {
+		if keyvals[i] != level.Key() {
+			continue
+		}
+		switch keyvals[i+1] {
+		case level.DebugValue():
+			err = sw.syslog.Debug(keyvals)
+		case level.InfoValue():
+			err = sw.syslog.Info(keyvals)
+		case level.WarnValue():
+			err = sw.syslog.Warning(keyvals)
+		case level.ErrorValue():
+			err = sw.syslog.Err(keyvals)
+		case "crit":
+			err = sw.syslog.Crit(keyvals)
+		default:
+			err = errors.New("invalid syslog level")
+		}
 	}
 
+	// syslogger := sw.Format(sw.syslog)
+	// err = syslogger.Log(keyvals...)
 	return err
 }
 

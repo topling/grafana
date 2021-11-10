@@ -44,11 +44,40 @@ type MultiLoggers struct {
 	loggers []LogWithFilters
 }
 
+func (ml MultiLoggers) Warn(msg string, args ...interface{}) {
+	for _, multilogger := range ml.loggers {
+		multilogger.val.Log(level.Key(), level.WarnValue(), "msg", msg, args)
+	}
+}
+
+func (ml MultiLoggers) Debug(msg string, args ...interface{}) {
+	for _, multilogger := range ml.loggers {
+		multilogger.val.Log(level.Key(), level.DebugValue(), "msg", msg, args)
+	}
+}
+
+func (ml MultiLoggers) Error(msg string, args ...interface{}) {
+	for _, multilogger := range ml.loggers {
+		multilogger.val.Log(level.Key(), level.ErrorValue(), "msg", msg, args)
+	}
+}
+
+func (ml MultiLoggers) Info(msg string, args ...interface{}) {
+	for _, multilogger := range ml.loggers {
+		multilogger.val.Log(level.Key(), level.InfoValue(), "msg", msg, args)
+	}
+}
+
 func New(logger string, ctx ...interface{}) MultiLoggers {
 	var newloger MultiLoggers
 	for _, logWithFilter := range Root.loggers {
-		params := append([]interface{}{"logger", logger}, ctx...)
-		logWithFilter.val = log.With(logWithFilter.val, params...)
+		logWithFilter.val = log.With(logWithFilter.val, append([]interface{}{"logger", logger}, ctx...))
+		v, ok := logWithFilter.filters[logger]
+		if ok {
+			logWithFilter.val = level.NewFilter(logWithFilter.val, v)
+		} else {
+			logWithFilter.val = level.NewFilter(logWithFilter.val, logWithFilter.maxLevel)
+		}
 		newloger.loggers = append(newloger.loggers, logWithFilter)
 	}
 	return newloger
@@ -105,7 +134,7 @@ type Formatedlogger func(w io.Writer) log.Logger
 
 func terminalColorFn(keyvals ...interface{}) term.FgBgColor {
 	for i := 0; i < len(keyvals)-1; i += 2 {
-		if keyvals[i] != "level" {
+		if keyvals[i] != level.Key() {
 			continue
 		}
 		switch keyvals[i+1] {
