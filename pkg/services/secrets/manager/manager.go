@@ -216,7 +216,7 @@ func (s *SecretsService) newDataKey(ctx context.Context, name string, scope stri
 
 	// 4. Cache its unencrypted value and return it
 	s.dataKeyCache[name] = dataKeyCacheItem{
-		expiry:  time.Now().Add(15 * time.Minute),
+		expiry:  time.Now().Add(15 * time.Second),
 		dataKey: dataKey,
 	}
 
@@ -252,7 +252,7 @@ func (s *SecretsService) dataKey(ctx context.Context, name string) ([]byte, erro
 
 	// 3. cache data key
 	s.dataKeyCache[name] = dataKeyCacheItem{
-		expiry:  time.Now().Add(15 * time.Minute),
+		expiry:  time.Now().Add(15 * time.Second),
 		dataKey: decrypted,
 	}
 
