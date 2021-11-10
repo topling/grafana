@@ -8,6 +8,7 @@ import (
 	"log/syslog"
 	"os"
 
+	"github.com/go-kit/log/level"
 	"github.com/inconshreveable/log15"
 	"gopkg.in/ini.v1"
 )
@@ -18,13 +19,11 @@ type SysLogHandler struct {
 	Address  string
 	Facility string
 	Tag      string
-	Format   log15.Format
+	Format   Formatedlogger
 }
 
-func NewSyslog(sec *ini.Section, format log15.Format) *SysLogHandler {
-	handler := &SysLogHandler{
-		Format: log15.LogfmtFormat(),
-	}
+func NewSyslog(sec *ini.Section, format Formatedlogger) *SysLogHandler {
+	handler := &SysLogHandler{}
 
 	handler.Format = format
 	handler.Network = sec.Key("network").MustString("")
@@ -33,7 +32,7 @@ func NewSyslog(sec *ini.Section, format log15.Format) *SysLogHandler {
 	handler.Tag = sec.Key("tag").MustString("")
 
 	if err := handler.Init(); err != nil {
-		Root.Error("Failed to init syslog log handler", "error", err)
+		level.Error(llog).Log("Failed to init syslog log handler", "error", err)
 		os.Exit(1)
 	}
 
@@ -55,7 +54,7 @@ func (sw *SysLogHandler) Init() error {
 	return nil
 }
 
-func (sw *SysLogHandler) Log(r *log15.Record) error {
+func (sw *SysLogHandler) Log(keyvals ...interface{}) error {
 	var err error
 
 	msg := string(sw.Format.Format(r))

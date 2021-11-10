@@ -23,7 +23,7 @@ import (
 type FileLogWriter struct {
 	mw *MuxWriter
 
-	Format           log15.Format
+	Format           Formatedlogger
 	Filename         string
 	Maxlines         int
 	maxlinesCurlines int
@@ -82,7 +82,7 @@ func NewFileWriter() *FileLogWriter {
 	return w
 }
 
-func (w *FileLogWriter) Log(r *log15.Record) error {
+func (w *FileLogWriter) Log(keyvals ...interface{}) error {
 	data := w.Format.Format(r)
 	w.docheck(len(data))
 	_, err := w.mw.Write(data)
