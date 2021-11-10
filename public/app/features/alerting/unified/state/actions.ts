@@ -57,7 +57,7 @@ import {
   isPrometheusRuleIdentifier,
   isRulerNotSupportedResponse,
 } from '../utils/rules';
-import { addDefaultsToAlertmanagerConfig } from '../utils/alertmanager';
+import { addDefaultsToAlertmanagerConfig, removeMuteTimingFromRoute } from '../utils/alertmanager';
 import * as ruleId from '../utils/rule-id';
 import { isEmpty } from 'lodash';
 import messageFromError from 'app/plugins/datasource/grafana-azure-monitor-datasource/utils/messageFromError';
@@ -647,6 +647,9 @@ export const deleteMuteTimingAction = (alertManagerSourceName: string, muteTimin
             ...config,
             alertmanager_config: {
               ...config.alertmanager_config,
+              route: config.alertmanager_config.route
+                ? removeMuteTimingFromRoute(muteTimingName, config.alertmanager_config?.route)
+                : undefined,
               mute_time_intervals: muteIntervals,
             },
           },
