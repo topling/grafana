@@ -124,6 +124,35 @@ steps:
     MYSQL_HOST: mysql
   image: grafana/build-container:1.4.5
   name: mysql-integration-tests
+trigger:
+  event:
+  - pull_request
+type: docker
+---
+depends_on: []
+kind: pipeline
+name: build-pr
+node:
+  type: no-parallel
+platform:
+  arch: amd64
+  os: linux
+services: []
+steps:
+- commands:
+  - echo $DRONE_RUNNER_NAME
+  image: alpine:3.14.2
+  name: identify-runner
+- commands:
+  - mkdir -p bin
+  - curl -fL -o bin/grabpl https://grafana-downloads.storage.googleapis.com/grafana-build-pipeline/v2.5.5/grabpl
+  - chmod +x bin/grabpl
+  - ./bin/grabpl verify-drone
+  - make gen-go
+  - ./bin/grabpl gen-version --build-id ${DRONE_BUILD_NUMBER}
+  - yarn install --immutable
+  image: grafana/build-container:1.4.5
+  name: initialize
 - commands:
   - ./bin/grabpl build-backend --jobs 8 --edition oss --build-id ${DRONE_BUILD_NUMBER}
     --variants linux-x64,linux-x64-musl,osx64,win64,armv6 --no-pull-enterprise
@@ -142,7 +171,7 @@ steps:
 - commands:
   - ./bin/grabpl build-plugins --jobs 8 --edition oss --no-install-deps
   depends_on:
-  - lint-backend
+  - initialize
   environment: null
   image: grafana/build-container:1.4.5
   name: build-plugins
@@ -412,7 +441,7 @@ steps:
 - commands:
   - ./bin/grabpl build-plugins --jobs 8 --edition oss --no-install-deps --sign --signing-admin
   depends_on:
-  - lint-backend
+  - initialize
   environment:
     GRAFANA_API_KEY:
       from_secret: grafana_api_key
@@ -865,7 +894,7 @@ steps:
 - commands:
   - ./bin/grabpl build-plugins --jobs 8 --edition oss --no-install-deps --sign --signing-admin
   depends_on:
-  - lint-backend
+  - initialize
   environment:
     GRAFANA_API_KEY:
       from_secret: grafana_api_key
@@ -1242,7 +1271,7 @@ steps:
   - ./bin/grabpl build-plugins --jobs 8 --edition enterprise --no-install-deps --sign
     --signing-admin
   depends_on:
-  - lint-backend
+  - initialize
   environment:
     GRAFANA_API_KEY:
       from_secret: grafana_api_key
@@ -1794,7 +1823,7 @@ steps:
 - commands:
   - ./bin/grabpl build-plugins --jobs 8 --edition oss --no-install-deps --sign --signing-admin
   depends_on:
-  - lint-backend
+  - initialize
   environment:
     GRAFANA_API_KEY:
       from_secret: grafana_api_key
@@ -2160,7 +2189,7 @@ steps:
   - ./bin/grabpl build-plugins --jobs 8 --edition enterprise --no-install-deps --sign
     --signing-admin
   depends_on:
-  - lint-backend
+  - initialize
   environment:
     GRAFANA_API_KEY:
       from_secret: grafana_api_key
@@ -2707,7 +2736,7 @@ steps:
 - commands:
   - ./bin/grabpl build-plugins --jobs 8 --edition oss --no-install-deps --sign --signing-admin
   depends_on:
-  - lint-backend
+  - initialize
   environment:
     GRAFANA_API_KEY:
       from_secret: grafana_api_key
@@ -3045,7 +3074,7 @@ steps:
   - ./bin/grabpl build-plugins --jobs 8 --edition enterprise --no-install-deps --sign
     --signing-admin
   depends_on:
-  - lint-backend
+  - initialize
   environment:
     GRAFANA_API_KEY:
       from_secret: grafana_api_key
@@ -3430,6 +3459,6 @@ kind: secret
 name: drone_token
 ---
 kind: signature
-hmac: 257660cf31bd5c6966dd46971f5a0fe37b4338ea9841614f8b5e5c366b378fc2
+hmac: ab6465f8d7306a0f82dabea0069c4197e724e409264a6282f1236bb6b3585e37
 
 ...
