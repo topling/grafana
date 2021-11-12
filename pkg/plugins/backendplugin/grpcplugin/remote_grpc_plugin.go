@@ -32,7 +32,7 @@ type remotePluginConn struct {
 	err  error
 }
 
-// newPlugin allocates and returns a new gRPC (external) backendplugin.Plugin.
+// newRemotePlugin allocates and returns a new gRPC (external) backendplugin.Plugin.
 func newRemotePlugin(descriptor remotePluginDescriptor) backendplugin.PluginFactoryFunc {
 	return func(pluginID string, logger log.Logger, env []string) (backendplugin.Plugin, error) {
 		return &remotePlugin{
