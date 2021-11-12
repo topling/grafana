@@ -18086,7 +18086,7 @@ __metadata:
     terser-webpack-plugin: 5.2.5
     test: "link:./public/test"
     testing-library-selector: ^0.1.3
-    tether: 1.4.7
+    tether: 2.0.0
     tether-drop: "https://github.com/torkelo/drop"
     tinycolor2: 1.4.1
     ts-jest: 26.4.4
@@ -31340,7 +31340,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tether@npm:1.4.7, tether@npm:^1.1.0":
+"tether@npm:2.0.0":
+  version: 2.0.0
+  resolution: "tether@npm:2.0.0"
+  checksum: 222f61dde68ba2a2903648fb13d58deb1f6eba020969973afb34495a27257a82c68f45c6960d70f4a6f2366fade4bdec36f184288f919b8e4417086ffac3be1b
+  languageName: node
+  linkType: hard
+
+"tether@npm:^1.1.0":
   version: 1.4.7
   resolution: "tether@npm:1.4.7"
   checksum: 766ac802654064b05e5785584a109101fc184266a0df99581a3ac45d33706c39d9fed314bd28daddf3532bfa0c41f81ebc133ce2c51995101ac922d3fb0477b8
