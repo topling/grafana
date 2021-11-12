@@ -2952,7 +2952,7 @@ __metadata:
     prop-types: 15.7.2
     react: 17.0.1
     react-dom: 17.0.1
-    react-icons: 2.2.7
+    react-icons: 4.3.1
     recompose: ^0.25.0
     reselect: 4.0.0
     sinon: 12.0.1
@@ -27309,26 +27309,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-icon-base@npm:2.1.0":
-  version: 2.1.0
-  resolution: "react-icon-base@npm:2.1.0"
+"react-icons@npm:4.3.1":
+  version: 4.3.1
+  resolution: "react-icons@npm:4.3.1"
   peerDependencies:
-    prop-types: "*"
     react: "*"
-    react-dom: "*"
-  checksum: 62b6bfe48649974d3ce2d9d1d1ebadc3523ae85181a2ecde858667c216abe1b3e95b68a0bf800335c6b9aa7804081d0fcbdb6647be04c00e1e5f537846788b00
-  languageName: node
-  linkType: hard
-
-"react-icons@npm:2.2.7":
-  version: 2.2.7
-  resolution: "react-icons@npm:2.2.7"
-  dependencies:
-    react-icon-base: 2.1.0
-  peerDependencies:
-    react: ^0.14.0 || ^15.0.0 || ^16.0.0
-    react-dom: ^0.14.0 || ^15.0.0 || ^16.0.0
-  checksum: 74e692fdd3d3e2be7cc7a549e7d9ac00eadf21d0b6825681d55c497d5c8683d39bcb56633037c428672140c8f024f062ee34b6f51cab74467ac4d5ce0e4fd98b
+  checksum: 2cc608acdd3e906aa3aaee290b8398220639677c949382d86e554020e5dab6a9f1ed7484418aa5272cb5c5c018e1fc9a323d433d901697a76530029f9ecb1263
   languageName: node
   linkType: hard
 
