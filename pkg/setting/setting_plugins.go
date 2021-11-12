@@ -46,8 +46,13 @@ func extractRemotePluginSettings(sections []*ini.Section) RemotePluginSettings {
 
 		pluginID := strings.Replace(sectionName, "plugin.", "", 1)
 
+		remoteAddr := section.Key("remote_server_addr").MustString("")
+		if len(remoteAddr) == 0 {
+			continue
+		}
+
 		rpsMap[pluginID] = RemotePluginOpts{
-			ServerAddr:            section.Key("remote_server_addr").MustString(""),
+			ServerAddr:            remoteAddr,
 			TLSEnabled:            section.Key("remote_server_tls_enabled").MustBool(false),
 			TLSServerName:         section.Key("remote_server_tls_server_name").MustString(""),
 			TLSCAFile:             section.Key("remote_server_tls_ca_file").MustString(""),
