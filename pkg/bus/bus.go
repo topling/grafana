@@ -40,6 +40,7 @@ type Bus interface {
 	AddHandler(handler HandlerFunc)
 	AddHandlerCtx(handler HandlerFunc)
 	AddEventListener(handler HandlerFunc)
+	AddEventListenerCtx(handler HandlerFunc)
 
 	// SetTransactionManager allows the user to replace the internal
 	// noop TransactionManager that is responsible for managing
@@ -205,6 +206,16 @@ func (b *InProcBus) AddEventListener(handler HandlerFunc) {
 	b.listeners[eventName] = append(b.listeners[eventName], handler)
 }
 
+func (b *InProcBus) AddEventListenerCtx(handler HandlerFunc) {
+	handlerType := reflect.TypeOf(handler)
+	eventName := handlerType.In(1).Elem().Name()
+	_, exists := b.listeners[eventName]
+	if !exists {
+		b.listeners[eventName] = make([]HandlerFunc, 0)
+	}
+	b.listeners[eventName] = append(b.listeners[eventName], handler)
+}
+
 // AddHandler attaches a handler function to the global bus.
 // Package level function.
 func AddHandler(implName string, handler HandlerFunc) {
@@ -221,6 +232,12 @@ func AddHandlerCtx(implName string, handler HandlerFunc) {
 // Package level function.
 func AddEventListener(handler HandlerFunc) {
 	globalBus.AddEventListener(handler)
+}
+
+// AddEventListenerCtx attaches a handler function to the event listener.
+// Package level function.
+func AddEventListenerCtx(handler HandlerFunc) {
+	globalBus.AddEventListenerCtx(handler)
 }
 
 func Dispatch(msg Msg) error {

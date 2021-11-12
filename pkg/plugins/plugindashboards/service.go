@@ -18,7 +18,7 @@ func ProvideService(pluginStore plugins.Store, pluginDashboardManager plugins.Pl
 		pluginDashboardManager: pluginDashboardManager,
 		logger:                 log.New("plugindashboards"),
 	}
-	bus.AddEventListener(s.handlePluginStateChanged)
+	bus.AddEventListenerCtx(s.handlePluginStateChanged)
 	s.updateAppDashboards()
 	return s
 }
@@ -71,7 +71,7 @@ func (s *Service) syncPluginDashboards(ctx context.Context, pluginDef *plugins.P
 			s.logger.Info("Deleting plugin dashboard", "pluginId", pluginDef.ID, "dashboard", dash.Slug)
 
 			deleteCmd := models.DeleteDashboardCommand{OrgId: orgID, Id: dash.DashboardId}
-			if err := bus.Dispatch(&deleteCmd); err != nil {
+			if err := bus.DispatchCtx(ctx, &deleteCmd); err != nil {
 				s.logger.Error("Failed to auto update app dashboard", "pluginId", pluginDef.ID, "error", err)
 				return
 			}
@@ -107,21 +107,21 @@ func (s *Service) syncPluginDashboards(ctx context.Context, pluginDef *plugins.P
 	}
 }
 
-func (s *Service) handlePluginStateChanged(event *models.PluginStateChangedEvent) error {
+func (s *Service) handlePluginStateChanged(ctx context.Context, event *models.PluginStateChangedEvent) error {
 	s.logger.Info("Plugin state changed", "pluginId", event.PluginId, "enabled", event.Enabled)
 
 	if event.Enabled {
-		s.syncPluginDashboards(context.TODO(), s.pluginStore.Plugin(event.PluginId), event.OrgId)
+		s.syncPluginDashboards(ctx, s.pluginStore.Plugin(event.PluginId), event.OrgId)
 	} else {
 		query := models.GetDashboardsByPluginIdQuery{PluginId: event.PluginId, OrgId: event.OrgId}
-		if err := bus.DispatchCtx(context.TODO(), &query); err != nil {
+		if err := bus.DispatchCtx(ctx, &query); err != nil {
 			return err
 		}
 
 		for _, dash := range query.Result {
 			s.logger.Info("Deleting plugin dashboard", "pluginId", event.PluginId, "dashboard", dash.Slug)
 			deleteCmd := models.DeleteDashboardCommand{OrgId: dash.OrgId, Id: dash.Id}
-			if err := bus.Dispatch(&deleteCmd); err != nil {
+			if err := bus.DispatchCtx(ctx, &deleteCmd); err != nil {
 				return err
 			}
 		}
