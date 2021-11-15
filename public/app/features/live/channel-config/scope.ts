@@ -1,7 +1,7 @@
 import { LiveChannelScope, LiveChannelSupport, SelectableValue } from '@grafana/data';
 import { getDataSourceSrv } from '@grafana/runtime';
 import { config } from 'app/core/config';
-import { loadPlugin } from 'app/features/plugins/PluginPage';
+import { loadPlugin } from 'app/features/plugins/utils';
 import { LiveMeasurementsSupport } from '../measurements/measurementsSupport';
 import { CoreGrafanaLiveFeature } from './types';
 
