@@ -1,7 +1,8 @@
 import { Field, PanelProps } from '@grafana/data';
 import { config } from '@grafana/runtime';
-import { TooltipDisplayMode } from '@grafana/schema';
-import { usePanelContext, TimeSeries, TooltipPlugin, ZoomPlugin } from '@grafana/ui';
+import { TooltipDisplayMode } from './TooltipOptions2';
+import { usePanelContext, TimeSeries, ZoomPlugin } from '@grafana/ui';
+import { TooltipPlugin } from './TooltipPlugin2';
 import { getFieldLinksForExplore } from 'app/features/explore/utils/links';
 import React, { useMemo } from 'react';
 import { AnnotationsPlugin } from './plugins/AnnotationsPlugin';
