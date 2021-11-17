@@ -23830,10 +23830,20 @@ update-notifier@^2.5.0:
     semver-diff "^2.0.0"
     xdg-basedir "^3.0.0"
 
+uplot-react@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.npmmirror.com/uplot-react/download/uplot-react-1.1.1.tgz#b3203f4948d68fa1ced0a35e3b7a69c0b98bf67f"
+  integrity sha1-syA/SUjWj6HO0KNeO3ppwLmL9n8=
+
 uplot@1.6.16:
   version "1.6.16"
   resolved "https://registry.yarnpkg.com/uplot/-/uplot-1.6.16.tgz#0c90c40dff52e9cbd7f24eb0d709c8cbf84be803"
   integrity sha512-Rh0WtFgtZdYk70Knu1VyZYbwlx5GuoIFBezZuHwlEUiREsIjOKpe3CXLXLaKc7/49Z7XhQ/bazgF/f1zercxgw==
+
+uplot@^1.6.17:
+  version "1.6.17"
+  resolved "https://registry.npmmirror.com/uplot/download/uplot-1.6.17.tgz#1f8fc07a0e48008798beca463523621ad66dcc46"
+  integrity sha512-WHNHvDCXURn+Qwb3QUUzP6rOxx+3kUZUspREyhkqmXCxFIND99l5z9intTh+uPEt+/EEu7lCaMjSd1uTfuTXfg==
 
 upper-case@^1.1.1:
   version "1.1.3"

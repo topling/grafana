@@ -42,11 +42,25 @@ export const TimeSeriesPanel: React.FC<TimeSeriesPanelProps> = ({
     );
   }
 
+  if (options.tooltip.mode === TooltipDisplayMode.Detailed && frames.length > 1) {
+    return (
+      <div className="panel-empty">
+        <p>Use outer join (Time) to transform data</p>
+      </div>
+    );
+  }
+
+  const sub_fields = frames[0].fields.filter((field) => !(field.labels && field.labels.name.startsWith('le')));
+
   const enableAnnotationCreation = Boolean(canAddAnnotations && canAddAnnotations());
 
   return (
     <TimeSeries
-      frames={frames}
+      frames={
+        options.tooltip.mode === TooltipDisplayMode.Detailed
+          ? [{ fields: sub_fields, length: sub_fields.length }]
+          : frames
+      }
       structureRev={data.structureRev}
       timeRange={timeRange}
       timeZone={timeZone}
@@ -60,7 +74,7 @@ export const TimeSeriesPanel: React.FC<TimeSeriesPanelProps> = ({
             <ZoomPlugin config={config} onZoom={onChangeTimeRange} />
             {options.tooltip.mode === TooltipDisplayMode.None || (
               <TooltipPlugin
-                data={alignedDataFrame}
+                data={options.tooltip.mode === TooltipDisplayMode.Detailed ? frames[0] : alignedDataFrame}
                 config={config}
                 mode={options.tooltip.mode}
                 sync={sync}
