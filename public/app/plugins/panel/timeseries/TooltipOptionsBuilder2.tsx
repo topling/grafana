@@ -15,6 +15,7 @@ export function addTooltipOptions<T extends OptionsWithTooltip>(
         { value: 'multi', label: 'All' },
         { value: 'none', label: 'Hidden' },
         { value: 'detailed', label: 'Detailed' },
+        { value: 'detailed2', label: 'Detailed2' },
       ];
 
   builder.addRadio({

@@ -239,7 +239,7 @@ export const TooltipPlugin: React.FC<TooltipPluginProps> = ({
       tooltip = <SeriesTable series={series} timestamp={xVal} />;
     }
 
-    if (mode === TooltipDisplayMode.Detailed) {
+    if (mode.startsWith('detailed')) {
       const sub_fields = otherProps.data.fields.filter((field) => field.labels && field.labels.name.startsWith('le'));
       if (sub_fields.length <= 1) {
         tooltip = (
@@ -259,66 +259,157 @@ export const TooltipPlugin: React.FC<TooltipPluginProps> = ({
           .sort((a, b) => a - b);
         const P999s = otherProps.data.fields.find((field) => field.labels?.name === 'P999');
         const y_max = P999s ? P999s.values.toArray().reduce((a, b) => a + b, 0) / P999s.values.length : 100;
-        tooltip = (
-          <UplotReact
-            options={{
-              legend: {
-                show: false,
-              },
-              scales: {
-                x: {
-                  time: false,
-                  range: [0, 100],
+        if (mode !== TooltipDisplayMode.Detailed2) {
+          tooltip = (
+            <UplotReact
+              options={{
+                legend: {
+                  show: false,
                 },
-                y: {
-                  range: [0, y_max],
-                },
-              },
-              axes: [
-                {
-                  stroke: 'white',
-                  grid: {
-                    stroke: '#3f3f3f',
-                    width: 1 / devicePixelRatio,
+                scales: {
+                  x: {
+                    time: false,
+                    range: [0, 100],
+                  },
+                  y: {
+                    range: [0, y_max],
                   },
                 },
-                {
-                  stroke: 'white',
-                  values: (u, vs) =>
-                    vs.map((v) =>
-                      v >= 1e9 ? v / 1e9 + 'Bil' : v >= 1e6 ? v / 1e6 + 'Mil' : v >= 1e3 ? v / 1e3 + 'K' : v
-                    ),
-                  size: 60,
-                  grid: {
-                    stroke: '#3f3f3f',
-                    width: 1 / devicePixelRatio,
+                axes: [
+                  {
+                    stroke: 'white',
+                    grid: {
+                      stroke: '#3f3f3f',
+                      width: 1 / devicePixelRatio,
+                    },
+                  },
+                  {
+                    stroke: 'white',
+                    values: (u, vs) =>
+                      vs.map((v) =>
+                        v >= 1e9 ? v / 1e9 + 'Bil' : v >= 1e6 ? v / 1e6 + 'Mil' : v >= 1e3 ? v / 1e3 + 'K' : v
+                      ),
+                    size: 60,
+                    grid: {
+                      stroke: '#3f3f3f',
+                      width: 1 / devicePixelRatio,
+                    },
+                  },
+                ],
+                title: xVal,
+                width: 360,
+                height: 240,
+                series: [
+                  {
+                    label: 'Pxx',
+                  },
+                  {
+                    show: true,
+                    spanGaps: false,
+                    label: 'CDF',
+                    // value: (self, rawValue) => '$' + rawValue.toFixed(2),
+                    // series style
+                    stroke: 'cyan',
+                    width: 2,
+                    // fill: 'rgba(255, 0, 0, 0.3)',
+                    // dash: [10, 5],
+                    paths: uPlot.paths.spline?.(),
+                  },
+                ],
+              }}
+              data={[x_vals, y_vals]}
+            />
+          );
+        } else {
+          tooltip = (
+            <UplotReact
+              options={{
+                legend: {
+                  show: false,
+                },
+                scales: {
+                  x: {
+                    time: false,
+                    range: [0, 100],
+                  },
+                  y: {
+                    range: [0, y_max],
+                  },
+                  y2: {
+                    distr: 3,
+                    // range: [100, 10 * y_max],
                   },
                 },
-              ],
-              title: xVal,
-              width: 360,
-              height: 240,
-              series: [
-                {
-                  label: 'Pxx',
-                },
-                {
-                  show: true,
-                  spanGaps: false,
-                  label: 'CDF',
-                  // value: (self, rawValue) => '$' + rawValue.toFixed(2),
-                  // series style
-                  stroke: 'cyan',
-                  width: 2,
-                  // fill: 'rgba(255, 0, 0, 0.3)',
-                  // dash: [10, 5],
-                  paths: uPlot.paths.spline?.(),
-                },
-              ],
-            }}
-            data={[x_vals, y_vals]}
-          />
-        );
+                axes: [
+                  {
+                    stroke: 'white',
+                    grid: {
+                      stroke: '#3f3f3f',
+                      width: 1 / devicePixelRatio,
+                    },
+                  },
+                  {
+                    stroke: 'cyan',
+                    values: (u, vs) =>
+                      vs.map((v) =>
+                        v >= 1e9 ? v / 1e9 + 'Bil' : v >= 1e6 ? v / 1e6 + 'Mil' : v >= 1e3 ? v / 1e3 + 'K' : v
+                      ),
+                    size: 60,
+                    grid: {
+                      stroke: '#3f3f3f',
+                      width: 1 / devicePixelRatio,
+                    },
+                  },
+                  {
+                    scale: 'y2',
+                    stroke: 'yellow',
+                    values: (u, vs) =>
+                      vs.map((v) =>
+                        v >= 1e9 ? v / 1e9 + 'Bil' : v >= 1e6 ? v / 1e6 + 'Mil' : v >= 1e3 ? v / 1e3 + 'K' : v
+                      ),
+                    size: 60,
+                    grid: { show: false },
+                    side: 1,
+                  },
+                ],
+                title: xVal,
+                width: 360,
+                height: 240,
+                series: [
+                  {
+                    label: 'Pxx',
+                  },
+                  {
+                    show: true,
+                    spanGaps: false,
+                    label: 'CDF',
+                    // value: (self, rawValue) => '$' + rawValue.toFixed(2),
+                    // series style
+                    stroke: 'cyan',
+                    width: 1.5,
+                    // fill: 'rgba(255, 0, 0, 0.3)',
+                    // dash: [10, 5],
+                    paths: uPlot.paths.spline?.(),
+                  },
+                  {
+                    scale: 'y2',
+                    show: true,
+                    spanGaps: false,
+                    label: 'logCDF',
+                    // value: (self, rawValue) => '$' + rawValue.toFixed(2),
+                    // series style
+                    stroke: 'yellow',
+                    width: 1.5,
+                    // fill: 'rgba(255, 0, 0, 0.3)',
+                    // dash: [10, 5],
+                    paths: uPlot.paths.spline?.(),
+                  },
+                ],
+              }}
+              data={[x_vals, y_vals, y_vals]}
+            />
+          );
+        }
       }
     }
   } else {
