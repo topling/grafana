@@ -183,6 +183,7 @@ export const TooltipPlugin: React.FC<TooltipPluginProps> = ({
   const xVal = xFieldFmt(xField!.values.get(focusedPointIdx)).text;
 
   if (!renderTooltip) {
+    let series: SeriesTableRowProps[] = [];
     // when interacting with a point in single mode
     if (mode === TooltipDisplayMode.Single && focusedSeriesIdx !== null) {
       const field = otherProps.data.fields[focusedSeriesIdx];
@@ -208,8 +209,7 @@ export const TooltipPlugin: React.FC<TooltipPluginProps> = ({
       );
     }
 
-    if (mode === TooltipDisplayMode.Multi) {
-      let series: SeriesTableRowProps[] = [];
+    if (mode === TooltipDisplayMode.Multi || mode === TooltipDisplayMode.Detailed3) {
       const frame = otherProps.data;
       const fields = frame.fields;
 
@@ -259,7 +259,7 @@ export const TooltipPlugin: React.FC<TooltipPluginProps> = ({
           .sort((a, b) => a - b);
         const P999s = otherProps.data.fields.find((field) => field.labels?.name === 'P999');
         const y_max = P999s ? P999s.values.toArray().reduce((a, b) => a + b, 0) / P999s.values.length : 100;
-        if (mode !== TooltipDisplayMode.Detailed2) {
+        if (mode === TooltipDisplayMode.Detailed) {
           tooltip = (
             <UplotReact
               options={{
@@ -320,7 +320,7 @@ export const TooltipPlugin: React.FC<TooltipPluginProps> = ({
               data={[x_vals, y_vals]}
             />
           );
-        } else {
+        } else if (mode === TooltipDisplayMode.Detailed2) {
           tooltip = (
             <UplotReact
               options={{
@@ -408,6 +408,70 @@ export const TooltipPlugin: React.FC<TooltipPluginProps> = ({
               }}
               data={[x_vals, y_vals, y_vals]}
             />
+          );
+        } else if (mode === TooltipDisplayMode.Detailed3) {
+          tooltip = (
+            <>
+              <SeriesTable series={series} />
+              <UplotReact
+                options={{
+                  legend: {
+                    show: false,
+                  },
+                  scales: {
+                    x: {
+                      time: false,
+                      range: [0, 100],
+                    },
+                    y: {
+                      range: [0, y_max],
+                    },
+                  },
+                  axes: [
+                    {
+                      stroke: 'white',
+                      grid: {
+                        stroke: '#3f3f3f',
+                        width: 1 / devicePixelRatio,
+                      },
+                    },
+                    {
+                      stroke: 'white',
+                      values: (u, vs) =>
+                        vs.map((v) =>
+                          v >= 1e9 ? v / 1e9 + 'Bil' : v >= 1e6 ? v / 1e6 + 'Mil' : v >= 1e3 ? v / 1e3 + 'K' : v
+                        ),
+                      size: 60,
+                      grid: {
+                        stroke: '#3f3f3f',
+                        width: 1 / devicePixelRatio,
+                      },
+                    },
+                  ],
+                  title: xVal,
+                  width: 360,
+                  height: 240,
+                  series: [
+                    {
+                      label: 'Pxx',
+                    },
+                    {
+                      show: true,
+                      spanGaps: false,
+                      label: 'CDF',
+                      // value: (self, rawValue) => '$' + rawValue.toFixed(2),
+                      // series style
+                      stroke: 'cyan',
+                      width: 2,
+                      // fill: 'rgba(255, 0, 0, 0.3)',
+                      // dash: [10, 5],
+                      paths: uPlot.paths.spline?.(),
+                    },
+                  ],
+                }}
+                data={[x_vals, y_vals]}
+              />
+            </>
           );
         }
       }

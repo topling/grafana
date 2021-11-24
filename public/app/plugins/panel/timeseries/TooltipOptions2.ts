@@ -4,6 +4,7 @@ export enum TooltipDisplayMode {
   None = 'none',
   Detailed = 'detailed',
   Detailed2 = 'detailed2',
+  Detailed3 = 'detailed3',
 }
 
 export type VizTooltipOptions = {
