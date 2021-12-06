@@ -50,7 +50,9 @@ export const TimeSeriesPanel: React.FC<TimeSeriesPanelProps> = ({
     );
   }
 
-  const sub_fields = frames[0].fields.filter((field) => !(field.labels && field.labels.name.startsWith('le')));
+  const sub_fields = frames[0].fields.filter(
+    (field) => !(field.labels && field.labels.name && field.labels.name.startsWith('le'))
+  );
 
   const enableAnnotationCreation = Boolean(canAddAnnotations && canAddAnnotations());
 

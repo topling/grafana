@@ -240,7 +240,9 @@ export const TooltipPlugin: React.FC<TooltipPluginProps> = ({
     }
 
     if (mode.startsWith('detailed')) {
-      const sub_fields = otherProps.data.fields.filter((field) => field.labels && field.labels.name.startsWith('le'));
+      const sub_fields = otherProps.data.fields.filter(
+        (field) => field.labels && field.labels.name && field.labels.name.startsWith('le')
+      );
       if (sub_fields.length <= 1) {
         tooltip = (
           <div>
