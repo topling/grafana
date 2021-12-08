@@ -244,11 +244,7 @@ export const TooltipPlugin: React.FC<TooltipPluginProps> = ({
         (field) => field.labels && field.labels.name && field.labels.name.startsWith('le')
       );
       if (sub_fields.length <= 1) {
-        tooltip = (
-          <div>
-            <p>no fields whose labels.name starts with &apos;le&apos;</p>
-          </div>
-        );
+        tooltip = null;
       } else {
         const total = sub_fields[0].values.get(focusedPointIdx);
         const x_vals = sub_fields
